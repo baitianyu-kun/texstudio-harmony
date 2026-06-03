@@ -1,0 +1,6 @@
+[submodule "third_party/texstudio"]
+	path = third_party/texstudio
+	url = https://github.com/baitianyu-kun/texstudio.git
+[submodule "third_party/poppler"]
+	path = third_party/poppler
+	url = https://github.com/baitianyu-kun/poppler.git
