@@ -1,0 +1,11 @@
+bash build.sh zlib
+bash build.sh bzip2
+bash build.sh libpng
+bash build.sh brotli
+bash build.sh expat
+bash build.sh freetype2
+bash build.sh graphite2
+bash build.sh harfbuzz
+bash build.sh icu
+bash build.sh teckit
+bash build.sh fontconfig
