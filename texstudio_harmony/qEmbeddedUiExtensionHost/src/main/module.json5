@@ -1,0 +1,37 @@
+{
+  "module": {
+    "name": "qEmbeddedUiExtensionHost",
+    "type": "feature",
+    "description": "$string:module_desc",
+    "mainElement": "EmbedQtAbility",
+    "deviceTypes": [
+      "2in1",
+      "tablet"
+    ],
+    "deliveryWithInstall": true,
+    "installationFree": false,
+    "pages": "$profile:main_pages",
+    "abilities": [
+      {
+        "name": "EmbedQtAbility",
+        "srcEntry": "./ets/embedqtability/EmbedQtAbility.ets",
+        "description": "$string:EmbedQtAbility_desc",
+        "icon": "$media:layered_image",
+        "label": "$string:EmbedQtAbility_label",
+        "startWindowIcon": "$media:startIcon",
+        "startWindowBackground": "$color:start_window_background",
+        "exported": true,
+        "skills": [
+          {
+            "entities": [
+              "entity.system.home"
+            ],
+            "actions": [
+              "action.system.home"
+            ]
+          }
+        ]
+      }
+    ],
+  }
+}

@@ -1,0 +1,212 @@
+{
+  "module": {
+    "name": "entry",
+    "type": "entry",
+    "srcEntry": "./ets/qabilitystage/QAbilityStage.ets",
+    "description": "$string:module_desc",
+    "mainElement": "QAbility",
+    "deviceTypes": [
+      // When 'phone' is added to the list, the main window does not restore itself to
+      // the desired state after being minimized (QTFOROH-1076). Before it is added
+      // back, be sure that the issue has been resolved.
+      "2in1"
+    ],
+    "deliveryWithInstall": true,
+    "installationFree": false,
+    "pages": "$profile:main_pages",
+    "extensionAbilities": [
+      {
+        "name": "QEmbeddedUiExtensionAbility",
+        "srcEntry": "./ets/qability/QEmbeddedUiExtensionAbility.ets",
+        "icon": "$media:layered_image",
+        "type": "embeddedUI",
+        "description": "",
+        "exported": true,
+        "extensionProcessMode": "instance"
+      },
+      {
+        "name": "QBundledEmbeddedUiExtensionAbility",
+        "srcEntry": "./ets/qability/QBundledEmbeddedUiExtensionAbility.ets",
+        "icon": "$media:layered_image",
+        "type": "embeddedUI",
+        "description": "",
+        "exported": true,
+        "extensionProcessMode": "bundle"
+      }
+    ],
+    "abilities": [
+      {
+        "name": "QAbility",
+        "srcEntry": "./ets/qability/QAbility.ets",
+        "launchType": "specified",
+        "description": "$string:QAbility_desc",
+        "icon": "$media:layered_image",
+        "label": "$string:QAbility_label",
+        "startWindowIcon": "$media:splash",
+        "startWindowBackground": "$color:start_window_background",
+        "exported": true,
+        "isolationProcess": true,
+        "skills": [
+          {
+            "entities": [
+              "entity.system.home"
+            ],
+            "actions": [
+              "action.system.home",
+              "ohos.want.action.sendData",
+            ],
+            "uris": [
+              {
+                "scheme": "file",
+                "utd": "general.text",
+                "maxFileSupported": 10
+              },
+              {
+                "scheme": "file",
+                "utd": "general.png",
+                "maxFileSupported": 10
+              },
+              {
+                "scheme": "file",
+                "utd": "general.jpeg",
+                "maxFileSupported": 10
+              },
+            ]
+          }
+        ],
+        "metadata": [
+          {
+            "name": 'enable.remove.starting.window',
+            "value": 'true'
+          }
+        ],
+        "continuable": true
+      }
+    ],
+    "requestPermissions": [
+      {
+        "name": "ohos.permission.SYSTEM_FLOAT_WINDOW",
+        "reason": "{}",
+        "usedScene": {
+          "abilities": [
+            "QAbility"
+          ],
+          "when": "always"
+        }
+      },
+      {
+        "name": "ohos.permission.FILE_ACCESS_PERSIST"
+      },
+      {
+        "name": "ohos.permission.PRINT"
+      },
+      {
+        "name": "ohos.permission.PREPARE_APP_TERMINATE"
+      },
+      {
+        "name": "ohos.permission.STORE_PERSISTENT_DATA"
+      },
+      {
+        "name": "ohos.permission.INTERNET"
+      },
+      {
+        "name": "ohos.permission.READ_WRITE_USER_FILE"
+      },
+      {
+        "name": "ohos.permission.READ_PASTEBOARD",
+        "reason": "{}",
+        "usedScene": {
+          "abilities": [
+            "QAbility"
+          ],
+          "when": "always"
+        }
+      },
+      {
+        "name": "ohos.permission.CAMERA",
+        "reason": "{}",
+        "usedScene": {
+          "abilities": [
+            "QAbility"
+          ],
+          "when": "always"
+        }
+      },
+      {
+        "name": "ohos.permission.MICROPHONE",
+        "reason": "{}",
+        "usedScene": {
+          "abilities": [
+            "QAbility"
+          ],
+          "when": "always"
+        }
+      },
+      {
+        "name": "ohos.permission.CUSTOM_SCREEN_CAPTURE",
+        "reason": "{}",
+        "usedScene": {
+          "abilities": [
+            "QAbility"
+          ],
+          "when": "always"
+        }
+      },
+      {
+        "name": "ohos.permission.ACCELEROMETER",
+      },
+      {
+        "name": "ohos.permission.GYROSCOPE",
+      },
+      {
+        "name": "ohos.permission.APPROXIMATELY_LOCATION",
+        "reason": "{}",
+        "usedScene": {
+          "abilities": [
+            "QAbility"
+          ],
+          "when": "always"
+        }
+      },
+      {
+        "name": "ohos.permission.LOCATION",
+        "reason": "{}",
+        "usedScene": {
+          "abilities": [
+            "QAbility"
+          ],
+          "when": "always"
+        }
+      },
+      {
+        "name": "ohos.permission.GET_WIFI_INFO",
+        "reason": "{}",
+        "usedScene": {
+          "abilities": [
+            "QAbility"
+          ],
+          "when": "always"
+        }
+      },
+      {
+        "name": "ohos.permission.ACCESS_BLUETOOTH",
+        "reason": "{}",
+        "usedScene": {
+          "abilities": [
+            "QAbility"
+          ],
+          "when": "always"
+        }
+      },
+      {
+        "name": "ohos.permission.GET_FILE_ICON",
+      },
+    ],
+    "hnpPackages": [
+      {
+        "package": "texlive.hnp",
+        "type": "public"
+      }
+    ]
+  }
+}

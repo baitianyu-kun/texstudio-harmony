@@ -1,0 +1,62 @@
+{
+  "app": {
+    "signingConfigs": [
+      {
+        "name": "default",
+        "type": "HarmonyOS",
+        "material": {
+          "certpath": "/home/baitianyu/texstudio-harmony/scripts/common/sign/.ohos/config/default_TexStudioHarmony_MGEcUmRt5IdTeaUZ1gt2SPkx9QMxdb1OgIMfb18hQRM=.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001BAD06DD4DCB1514EA5405562D000B27A678F94B87993BFDCF8C8951D0819B1CA4D547CCA071061B",
+          "profile": "/home/baitianyu/texstudio-harmony/scripts/common/sign/.ohos/config/default_TexStudioHarmony_MGEcUmRt5IdTeaUZ1gt2SPkx9QMxdb1OgIMfb18hQRM=.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "/home/baitianyu/texstudio-harmony/scripts/common/sign/.ohos/config/default_TexStudioHarmony_MGEcUmRt5IdTeaUZ1gt2SPkx9QMxdb1OgIMfb18hQRM=.p12",
+          "storePassword": "0000001B2305E0F225254E77E1AE44BC8E5D996CB1EE696F5B42A0EA9FE5B6E71B28323F42DE25B4607AFC"
+        }
+      }
+    ],
+    "products": [
+      {
+        "name": "default",
+        "signingConfig": "default",
+        "compatibleSdkVersion": "6.0.0(20)",
+        "runtimeOS": "HarmonyOS",
+        "targetSdkVersion": "6.0.0(20)"
+      }
+    ],
+    "buildModeSet": [
+      {
+        "name": "debug"
+      },
+      {
+        "name": "release"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "entry",
+      "srcPath": "./entry",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "qEmbeddedUiExtensionHost",
+      "srcPath": "./qEmbeddedUiExtensionHost",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
+    }
+  ]
+}

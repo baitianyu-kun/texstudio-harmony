@@ -1,13 +1,22 @@
-mkdir -p texlive-hnp
-cd texlive-hnp
+#!/bin/bash
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$( cd "$SCRIPT_DIR/../.." &> /dev/null && pwd )"
+
+DIST_DIR="${PROJECT_ROOT}/build/build-texlive-ohos-dist"
+HNP_DIR="${PROJECT_ROOT}/build/build-texlive-ohos-hnp"
+
+mkdir -p $HNP_DIR
 
 # 拷贝 dist-ohos 内容
-cp -r ../dist-ohos/bin .
-cp -r ../dist-ohos/lib .
-cp -r ../dist-ohos/share .
-cp -r ../dist-ohos/texmf .
+cp -r $DIST_DIR/bin $HNP_DIR/
+cp -r $DIST_DIR/lib $HNP_DIR/
+cp -r $DIST_DIR/share $HNP_DIR/
+cp -r $DIST_DIR/texmf $HNP_DIR/
 
-cat > hnp.json << 'EOF'
+cat > $HNP_DIR/hnp.json << 'EOF'
 {
   "type": "hnp-config",
   "name": "texlive",
@@ -32,6 +41,5 @@ cat > hnp.json << 'EOF'
 
 EOF
 
-cd ..
-$TOOL_HOME/sdk/default/openharmony/toolchains/hnpcli pack -i ./texlive-hnp -o ./output -name texlive -v 1.0.0
+$TOOL_HOME/sdk/default/openharmony/toolchains/hnpcli pack -i $HNP_DIR -o ${PROJECT_ROOT}/build -name texlive -v 1.0.0
 
