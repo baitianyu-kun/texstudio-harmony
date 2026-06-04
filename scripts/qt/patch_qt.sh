@@ -3,7 +3,7 @@ set -e
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 PROJECT_ROOT="$( cd "$SCRIPT_DIR/../.." &> /dev/null && pwd )"
-export QT_SRC_DIR="$PROJECT_ROOT/build/qt/src/qt-harmonyos-5.12.12"
+export QT_SRC_DIR="$PROJECT_ROOT/build/src/qt-harmonyos-5.12.12"
 
 echo "Patching Qt source at $QT_SRC_DIR..."
 

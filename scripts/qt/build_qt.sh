@@ -8,9 +8,9 @@ export NATIVE_OHOS_SDK="$TOOL_HOME/sdk/default/openharmony/native"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 PROJECT_ROOT="$( cd "$SCRIPT_DIR/../.." &> /dev/null && pwd )"
 
-QT_SRC_DIR="$PROJECT_ROOT/build/qt/src/qt-harmonyos-5.12.12"
-QT_BUILD_DIR="$PROJECT_ROOT/build/qt/build-qt-ohos"
-QT_INSTALL_DIR="$PROJECT_ROOT/build/qt/build-qt-ohos-install"
+QT_SRC_DIR="$PROJECT_ROOT/build/src/qt-harmonyos-5.12.12"
+QT_BUILD_DIR="$PROJECT_ROOT/build/build-qt-ohos"
+QT_INSTALL_DIR="$PROJECT_ROOT/build/build-qt-ohos-install"
 
 # Target Architecture (arm64-v8a, armeabi-v7a, x86_64)
 export OHOS_TARGET_ARCH=${OHOS_TARGET_ARCH:-arm64-v8a}

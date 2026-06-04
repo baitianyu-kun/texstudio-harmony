@@ -4,7 +4,7 @@ set -e
 # Configuration
 QT_URL="https://download.qt.io/snapshots/qt/qt-for-harmonyos/5.12.12/qt-harmonyos-src-5.12.12-20260403.tar.xz"
 QT_ARCHIVE=$(basename "$QT_URL")
-TARGET_BASE_DIR="build/qt/src"
+TARGET_BASE_DIR="build/src"
 FINAL_DIR_NAME="qt-harmonyos-5.12.12"
 
 # Ensure we are in the project root
