@@ -13,25 +13,24 @@ PROJECT_ROOT="$( cd "$SCRIPT_DIR/../.." &> /dev/null && pwd )"
 
 SOURCE_DIR="${PROJECT_ROOT}/build/src/texlive-source"
 BUILD_DIR="${PROJECT_ROOT}/build/build-texlive-ohos"
-HOST_BUILD_DIR="${PROJECT_ROOT}/build/build-texlive-ohos-install"
+HOST_BUILD_DIR="${PROJECT_ROOT}/build/build-texlive-host"
 
 export OHOS_SDK="$TOOL_HOME/sdk/default/openharmony"
 export SYSROOT="${OHOS_SDK}/native/sysroot"
 TOOLCHAIN_BIN="${OHOS_SDK}/native/llvm/bin"
 
-# todo
-export LYCIUM_USR="/home/baitianyu/makeTexStudio/texlive/tpc_c_cplusplus/lycium/usr"
-ICU_PREFIX="${LYCIUM_USR}/icu/arm64-v8a"
-FREETYPE_PREFIX="${LYCIUM_USR}/freetype2/arm64-v8a"
-HARFBUZZ_PREFIX="${LYCIUM_USR}/harfbuzz/arm64-v8a"
-GRAPHITE2_PREFIX="${LYCIUM_USR}/graphite2/arm64-v8a"
-TECKIT_PREFIX="${LYCIUM_USR}/teckit/arm64-v8a"
-ZLIB_PREFIX="${LYCIUM_USR}/zlib/arm64-v8a"
-BZIP2_PREFIX="${LYCIUM_USR}/bzip2/arm64-v8a"
-LIBPNG_PREFIX="${LYCIUM_USR}/libpng/arm64-v8a"
-BROTLI_PREFIX="${LYCIUM_USR}/brotli/arm64-v8a"
-FONTCONFIG_PREFIX="${LYCIUM_USR}/fontconfig/arm64-v8a"
-EXPAT_PREFIX="${LYCIUM_USR}/expat/arm64-v8a"
+export HPK_INSTALL_DIR="$PROJECT_ROOT/build/build-hpkbuilds-ohos-install"
+ICU_PREFIX="${HPK_INSTALL_DIR}/icu/arm64-v8a"
+FREETYPE_PREFIX="${HPK_INSTALL_DIR}/freetype2/arm64-v8a"
+HARFBUZZ_PREFIX="${HPK_INSTALL_DIR}/harfbuzz/arm64-v8a"
+GRAPHITE2_PREFIX="${HPK_INSTALL_DIR}/graphite2/arm64-v8a"
+TECKIT_PREFIX="${HPK_INSTALL_DIR}/teckit/arm64-v8a"
+ZLIB_PREFIX="${HPK_INSTALL_DIR}/zlib/arm64-v8a"
+BZIP2_PREFIX="${HPK_INSTALL_DIR}/bzip2/arm64-v8a"
+LIBPNG_PREFIX="${HPK_INSTALL_DIR}/libpng/arm64-v8a"
+BROTLI_PREFIX="${HPK_INSTALL_DIR}/brotli/arm64-v8a"
+FONTCONFIG_PREFIX="${HPK_INSTALL_DIR}/fontconfig/arm64-v8a"
+EXPAT_PREFIX="${HPK_INSTALL_DIR}/expat/arm64-v8a"
 
 # 合并所有依赖到编译参数
 DEP_INCLUDES="-I${ICU_PREFIX}/include \
@@ -350,6 +349,26 @@ step_end
 # ============================================================
 step_start "打补丁"
 
+# --- 修复 kpathsea: 处理 OHOS 沙箱对绝对路径 lstat 的 EACCES 限制 ---
+PROGNAME_SRC="${SOURCE_DIR}/texk/kpathsea/progname.c"
+if [ -f "${PROGNAME_SRC}" ]; then
+    if ! grep -q "OHOS Sandbox blocks lstat" "${PROGNAME_SRC}"; then
+        # 使用 sed 进行多行替换
+        # 查找包含 if (lstat (pre, &st) != 0) { 的行，并替换随后的 4 行
+        sed -i '/if (lstat (pre, &st) != 0) {/{
+N
+N
+N
+N
+c\
+    if (lstat (pre, \&st) != 0) {\n      if (errno == EACCES) {\n        // OHOS Sandbox blocks lstat on absolute installation paths. \n        // We assume it'\''s not a symlink and continue.\n        st.st_mode = 0; \n      } else {\n        fprintf (stderr, "lstat(%s) failed: ", pre);\n        perror (pre);\n        return NULL;\n      }\n    }
+}' "${PROGNAME_SRC}"
+        log "已修补: progname.c (OHOS 沙箱 lstat 兼容)"
+    else
+        log "跳过修补: progname.c (OHOS 沙箱 lstat 兼容已存在)"
+    fi
+fi
+
 # --- 修复 dvipdfmx: 鸿蒙没有 getpass() 函数 ---
 DVIPDFMX_SRC="${SOURCE_DIR}/texk/dvipdfm-x/dvipdfmx.c"
 if [ -f "${DVIPDFMX_SRC}" ] && grep -q "getpass" "${DVIPDFMX_SRC}"; then
@@ -427,7 +446,7 @@ step_end
 # ============================================================
 step_start "验证并收集产物"
 
-DIST_DIR="${SCRIPT_DIR}/dist-ohos"
+DIST_DIR="${PROJECT_ROOT}/build/build-texlive-ohos-dist"
 mkdir -p "${DIST_DIR}/bin"
 
 # 清理旧的 dist

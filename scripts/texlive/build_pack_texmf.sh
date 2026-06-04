@@ -14,14 +14,16 @@
 set -e
 
 export OHOS_SDK="$TOOL_HOME/sdk/default/openharmony"
-export LYCIUM_USR="/home/baitianyu/makeTexStudio/texlive/tpc_c_cplusplus/lycium/usr"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DIST_DIR="${SCRIPT_DIR}/dist-ohos"
+PROJECT_ROOT="$( cd "$SCRIPT_DIR/../.." &> /dev/null && pwd )"
+export HPK_INSTALL_DIR="$PROJECT_ROOT/build/build-hpkbuilds-ohos-install"
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DIST_DIR="${PROJECT_ROOT}/build/build-texlive-ohos-dist"
 TEXMF_DIR="${DIST_DIR}/texmf"
-PACK_OUTPUT="${DIST_DIR}/texlive-ohos.tar.gz"
-DOWNLOAD_CACHE="${SCRIPT_DIR}/.tlpkg-cache"
-HOST_BUILD_DIR="${SCRIPT_DIR}/build-host"
+DOWNLOAD_CACHE="${DIST_DIR}/.tlpkg-cache"
+HOST_BUILD_DIR="${PROJECT_ROOT}/build/build-texlive-host"
 
 # TeX Live tlnet 镜像（可换成国内镜像加速）
 # TLNET_MIRROR="${TLNET_MIRROR:-https://mirror.ctan.org/systems/texlive/tlnet/archive}"
@@ -35,9 +37,6 @@ NOTO_CJK_PATHS=(
     "/usr/share/fonts/truetype/noto"
     "/usr/share/fonts/opentype/noto-cjk"
 )
-
-# lycium 依赖路径
-LYCIUM_USR="${LYCIUM_USR:-/home/suwan/tpc_c_cplusplus/lycium/usr}"
 
 JOBS="${JOBS:-$(nproc)}"
 
@@ -356,7 +355,6 @@ log "第 2 步: 清理旧文件"
 rm -rf "${TEXMF_DIR}"
 rm -rf "${DIST_DIR}/lib"
 rm -rf "${DIST_DIR}/share"
-rm -f "${PACK_OUTPUT}"
 rm -f "${DIST_DIR}/test-"*.tex
 
 mkdir -p "${TEXMF_DIR}"
@@ -555,7 +553,7 @@ log "第 7 步: 打包动态链接库"
 mkdir -p "${DIST_DIR}/lib"
 
 for prefix in icu freetype2 harfbuzz graphite2 teckit zlib bzip2 libpng brotli fontconfig expat; do
-    LIBDIR="${LYCIUM_USR}/${prefix}/arm64-v8a/lib"
+    LIBDIR="${HPK_INSTALL_DIR}/${prefix}/arm64-v8a/lib"
     if [ ! -d "${LIBDIR}" ]; then
         log "  跳过 ${prefix} (目录不存在)"
         continue
@@ -584,7 +582,7 @@ log "动态库: ${LIB_COUNT} 个文件, ${LIB_SIZE}"
 echo ""
 log "第 8 步: ICU 数据"
 
-ICU_DATA_FILE=$(find "${LYCIUM_USR}/icu/arm64-v8a/share" -name "icudt*.dat" 2>/dev/null | head -1)
+ICU_DATA_FILE=$(find "${HPK_INSTALL_DIR}/icu/arm64-v8a/share" -name "icudt*.dat" 2>/dev/null | head -1)
 if [ -n "${ICU_DATA_FILE}" ]; then
     mkdir -p "${DIST_DIR}/share/icu"
     cp "${ICU_DATA_FILE}" "${DIST_DIR}/share/icu/"
@@ -987,15 +985,11 @@ for f in test-plain.tex test-latex.tex test-latex-full.tex test-xelatex.tex test
     [ -f "${f}" ] && PACK_ITEMS="${PACK_ITEMS} ${f}"
 done
 
-tar czf texlive-ohos.tar.gz ${PACK_ITEMS}
-
-PACK_SIZE=$(ls -lh texlive-ohos.tar.gz | awk '{print $5}')
 TEXMF_SIZE=$(du -sh texmf/ | awk '{print $1}')
 LIB_SIZE=$(du -sh lib/ 2>/dev/null | awk '{print $1}')
 BIN_SIZE=$(du -sh bin/ | awk '{print $1}')
 FILE_COUNT=$(find bin/ lib/ texmf/ -type f 2>/dev/null | wc -l)
 
-log "打包完成"
 
 # ============================================================
 # 总结
@@ -1008,8 +1002,6 @@ echo "============================================================"
 echo "  打包完成 (总耗时 $(format_duration $TOTAL_DURATION))"
 echo "============================================================"
 echo ""
-echo "  产物:        ${PACK_OUTPUT}"
-echo "  压缩包:      ${PACK_SIZE}"
 echo "  bin/:        ${BIN_SIZE}"
 echo "  lib/:        ${LIB_SIZE}"
 echo "  texmf/:      ${TEXMF_SIZE}"
