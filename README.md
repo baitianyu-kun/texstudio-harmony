@@ -108,7 +108,6 @@ cd ./scripts/texlive
 ./build_texlive_host.sh
 ./build_texlive_ohos.sh
 ./build_pack_texmf.sh
-./build_texlive_hnp.sh  # 打包成 OpenHarmony Native Package (HNP)
 
 # 第五步：编译 TeXstudio
 cd ./scripts/texstudio
@@ -117,6 +116,7 @@ cd ./scripts/texstudio
 # 第六步：将编译产物拷贝到工程中
 cd ./scripts/common
 ./copy_libs_entry.sh
+./build_texlive_hnp.sh  # 打包成 OpenHarmony Native Package (HNP)
 ```
 
 ### 3. 生成签名并推送
