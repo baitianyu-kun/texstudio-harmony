@@ -8,6 +8,8 @@ PROJECT_ROOT="$( cd "$SCRIPT_DIR/../.." &> /dev/null && pwd )"
 DIST_DIR="${PROJECT_ROOT}/build/build-texlive-ohos-dist"
 HNP_DIR="${PROJECT_ROOT}/build/build-texlive-ohos-hnp"
 
+rm -r $HNP_DIR
+
 mkdir -p $HNP_DIR
 
 # 拷贝 dist-ohos 内容
