@@ -415,6 +415,25 @@ HEADER
     log "验证: $(grep -c 'ohos_compat' "${DVIPDFMX_SRC}") 处引用"
 fi
 
+# --- 修复 xetex/fontconfig/ICU 路径: 为命令行工具强制动态注入环境变量 ---
+if [ -f "${PROGNAME_SRC}" ]; then
+    if ! grep -q "FONTCONFIG_FILE" "${PROGNAME_SRC}"; then
+        sed -i '/sdir_parent = xdirname (sdir);/a\
+  {\
+    if (getenv("FONTCONFIG_FILE") == NULL) {\
+      char *fc_file = concat (sdir_parent, "/texmf/fonts/conf/fonts.conf");\
+      setenv("FONTCONFIG_FILE", fc_file, 0);\
+      free(fc_file);\
+    }\
+    if (getenv("ICU_DATA") == NULL) {\
+      char *icu_data = concat (sdir_parent, "/share/icu");\
+      setenv("ICU_DATA", icu_data, 0);\
+      free(icu_data);\
+    }\
+  }' "${PROGNAME_SRC}"
+        log "已修补: progname.c (注入 FONTCONFIG_FILE 与 ICU_DATA 环境变量)"
+    fi
+fi
 # --- 修复 xdvipsk: 禁用 Windows 特有链接（备选方案） ---
 # xdvipsk 在 configure 中已通过 --disable-xdvipsk 禁用
 # 如果仍然被编译，在这里用 stub Makefile 阻止

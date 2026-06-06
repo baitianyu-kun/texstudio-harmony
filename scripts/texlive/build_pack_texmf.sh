@@ -88,6 +88,8 @@ PACKAGES_FONTS=(
 
 # --- LaTeX 常用宏包 Tier 1（几乎所有文档都用） ---
 PACKAGES_TIER1=(
+    # logo
+    metalogo
     # 数学
     amsmath
     mathtools
