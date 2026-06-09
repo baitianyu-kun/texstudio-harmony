@@ -1,9 +1,6 @@
 #!/bin/bash
 set -e
 
-# --- SDK Path ---
-export OHOS_SDK="$TOOL_HOME/sdk/default/openharmony"
-
 # --- Configuration ---
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 PROJECT_ROOT="$( cd "$SCRIPT_DIR/../.." &> /dev/null && pwd )"
@@ -16,22 +13,17 @@ QTDECLARATIVE_SRC_DIR="$PROJECT_ROOT/build/src/qtdeclarative"
 QT5COMPAT_SRC_DIR="$PROJECT_ROOT/build/src/qt5compat"
 
 # Build directories
-QT_BUILD_DIR="$PROJECT_ROOT/build/build-qt-ohos"
-QTTOOLS_BUILD_DIR="$PROJECT_ROOT/build/build-qttools-ohos"
-QTSVG_BUILD_DIR="$PROJECT_ROOT/build/build-qtsvg-ohos"
-QTDECLARATIVE_BUILD_DIR="$PROJECT_ROOT/build/build-qtdeclarative-ohos"
-QT5COMPAT_BUILD_DIR="$PROJECT_ROOT/build/build-qt5compat-ohos"
+QT_BUILD_DIR="$PROJECT_ROOT/build/build-qt-host"
+QTTOOLS_BUILD_DIR="$PROJECT_ROOT/build/build-qttools-host"
+QTSVG_BUILD_DIR="$PROJECT_ROOT/build/build-qtsvg-host"
+QTDECLARATIVE_BUILD_DIR="$PROJECT_ROOT/build/build-qtdeclarative-host"
+QT5COMPAT_BUILD_DIR="$PROJECT_ROOT/build/build-qt5compat-host"
 
-# Host path and Install directory
-QT_HOST_PATH="$PROJECT_ROOT/build/build-qt-host"
-QT_ALL_INSTALL_DIR="$PROJECT_ROOT/build/build-qt-ohos-install"
+# Install directory
+QT_ALL_INSTALL_DIR="$PROJECT_ROOT/build/build-qt-host-install"
 
-# Additional packages path
-export OHOS_ADDITIONAL_PACKAGES="$PROJECT_ROOT/additional-packages"
-
-# Target Architecture
-export OHOS_TARGET_ARCH=${OHOS_TARGET_ARCH:-arm64-v8a}
-export PARALLEL_JOBS=${PARALLEL_JOBS:-4}
+# Target Architecture & Jobs
+export PARALLEL_JOBS=${PARALLEL_JOBS:-8}
 
 # --- Validation ---
 if [ ! -d "$QT_SRC_DIR" ]; then
@@ -45,24 +37,22 @@ fi
 # ==========================================
 
 # --- Configure QtBase ---
-echo "Creating QtBase ohos build directory: $QT_BUILD_DIR"
+echo "Creating QtBase host build directory: $QT_BUILD_DIR"
 mkdir -p "$QT_BUILD_DIR"
 cd "$QT_BUILD_DIR"
 
-echo "Configuring QtBase for OpenHarmony ($OHOS_TARGET_ARCH)..."
+echo "Configuring QtBase for host..."
 "$QT_SRC_DIR/configure" \
     -prefix "$QT_ALL_INSTALL_DIR" \
-    -no-use-gold-linker \
-    -no-pch \
-    -nomake tests -nomake examples \
-    -openssl-runtime \
-    -ohos-sdk "$OHOS_SDK" \
-    -ohos-arch "$OHOS_TARGET_ARCH" \
-    -qt-host-path "$QT_HOST_PATH" \
-    -- -DCMAKE_FIND_ROOT_PATH="$OHOS_ADDITIONAL_PACKAGES"
+    -opensource \
+    -confirm-license \
+    -no-framework \
+    -nomake examples \
+    -nomake tests \
+    -verbose
 
 # --- Build QtBase ---
-echo "Building QtBase ohos..."
+echo "Building QtBase host..."
 cmake --build . --parallel "$PARALLEL_JOBS"
 
 # --- Install QtBase ---
@@ -76,18 +66,15 @@ echo "QtBase build and install complete."
 # ==========================================
 
 # --- Configure QtTools ---
-echo "Creating QtTools ohos build directory: $QTTOOLS_BUILD_DIR"
+echo "Creating QtTools host build directory: $QTTOOLS_BUILD_DIR"
 mkdir -p "$QTTOOLS_BUILD_DIR"
 cd "$QTTOOLS_BUILD_DIR"
     
-echo "Configuring QtTools for ohos..."
-"$QT_BUILD_DIR/bin/qt-cmake" "$QTTOOLS_SRC_DIR" \
-    -DCMAKE_DISABLE_FIND_PACKAGE_WrapLibClang=ON \
-    -DQT_ADDITIONAL_HOST_PACKAGES_PREFIX_PATH="$PROJECT_ROOT/build/build-qttools-host" \
-    -DQT_FEATURE_qtdiag=OFF
+echo "Configuring QtTools for host..."
+"$QT_BUILD_DIR/bin/qt-cmake" "$QTTOOLS_SRC_DIR"
     
 # --- Build QtTools ---
-echo "Building QtTools ohos..."
+echo "Building QtTools host..."
 cmake --build . --parallel "$PARALLEL_JOBS"
     
 # --- Install QtTools ---
@@ -101,17 +88,15 @@ echo "QtTools build and install complete."
 # ==========================================
 
 # --- Configure QtSvg ---
-echo "Creating QtSvg ohos build directory: $QTSVG_BUILD_DIR"
+echo "Creating QtSvg host build directory: $QTSVG_BUILD_DIR"
 mkdir -p "$QTSVG_BUILD_DIR"
 cd "$QTSVG_BUILD_DIR"
     
-echo "Configuring QtSvg for ohos..."
-"$QT_BUILD_DIR/bin/qt-cmake" "$QTSVG_SRC_DIR" \
-    -DCMAKE_DISABLE_FIND_PACKAGE_WrapLibClang=ON \
-    -DQT_ADDITIONAL_HOST_PACKAGES_PREFIX_PATH="$PROJECT_ROOT/build/build-qtsvg-host"
+echo "Configuring QtSvg for host..."
+"$QT_BUILD_DIR/bin/qt-cmake" "$QTSVG_SRC_DIR"
     
 # --- Build QtSvg ---
-echo "Building QtSvg ohos..."
+echo "Building QtSvg host..."
 cmake --build . --parallel "$PARALLEL_JOBS"
     
 # --- Install QtSvg ---
@@ -125,17 +110,15 @@ echo "QtSvg build and install complete."
 # ==========================================
 
 # --- Configure QtDeclarative ---
-echo "Creating QtDeclarative ohos build directory: $QTDECLARATIVE_BUILD_DIR"
+echo "Creating QtDeclarative host build directory: $QTDECLARATIVE_BUILD_DIR"
 mkdir -p "$QTDECLARATIVE_BUILD_DIR"
 cd "$QTDECLARATIVE_BUILD_DIR"
     
-echo "Configuring QtDeclarative for ohos..."
-"$QT_BUILD_DIR/bin/qt-cmake" "$QTDECLARATIVE_SRC_DIR" \
-    -DCMAKE_DISABLE_FIND_PACKAGE_WrapLibClang=ON \
-    -DQT_ADDITIONAL_HOST_PACKAGES_PREFIX_PATH="$PROJECT_ROOT/build/build-qtdeclarative-host"
+echo "Configuring QtDeclarative for host..."
+"$QT_BUILD_DIR/bin/qt-cmake" "$QTDECLARATIVE_SRC_DIR"
     
 # --- Build QtDeclarative ---
-echo "Building QtDeclarative ohos..."
+echo "Building QtDeclarative host..."
 cmake --build . --parallel "$PARALLEL_JOBS"
     
 # --- Install QtDeclarative ---
@@ -149,17 +132,15 @@ echo "QtDeclarative build and install complete."
 # ==========================================
 
 # --- Configure Qt5Compat ---
-echo "Creating Qt5Compat ohos build directory: $QT5COMPAT_BUILD_DIR"
+echo "Creating Qt5Compat host build directory: $QT5COMPAT_BUILD_DIR"
 mkdir -p "$QT5COMPAT_BUILD_DIR"
 cd "$QT5COMPAT_BUILD_DIR"
     
-echo "Configuring Qt5Compat for ohos..."
-"$QT_BUILD_DIR/bin/qt-cmake" "$QT5COMPAT_SRC_DIR" \
-    -DCMAKE_DISABLE_FIND_PACKAGE_WrapLibClang=ON \
-    -DQT_ADDITIONAL_HOST_PACKAGES_PREFIX_PATH="$PROJECT_ROOT/build/build-qt5compat-host"
+echo "Configuring Qt5Compat for host..."
+"$QT_BUILD_DIR/bin/qt-cmake" "$QT5COMPAT_SRC_DIR"
     
 # --- Build Qt5Compat ---
-echo "Building Qt5Compat ohos..."
+echo "Building Qt5Compat host..."
 cmake --build . --parallel "$PARALLEL_JOBS"
     
 # --- Install Qt5Compat ---

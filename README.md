@@ -23,28 +23,30 @@ TeXstudio for HarmonyOS
 
 ## 项目简介
 
-本项目旨在将知名 LaTeX 编辑器 [TeXstudio](https://github.com/texstudio-org/texstudio) 以及其核心依赖项 [Poppler](https://github.com/innodatalabs/poppler) 和 [TeX Live](https://tug.org/texlive/) 统一移植到OpenHarmony平台。 
+本项目旨在将知名 LaTeX 编辑器 [TeXstudio](https://github.com/texstudio-org/texstudio) 以及其核心依赖项 [Poppler](https://gitlab.freedesktop.org/poppler/poppler) 和 [TeX Live](https://tug.org/texlive/) 统一移植到OpenHarmony平台。 
 
 ## 仓库结构
 
+本项目主要由以下几个核心部分组成：
+
 ```text
-.
-├── scripts/                    # 自动化构建脚本目录
-│   ├── common/                 # 共有工具脚本 (HNP 打包、.so 库拷贝、签名等)
-│   ├── poppler/                # Poppler 及 freetype 构建脚本
-│   ├── qt/                     # Qt 源码下载、Patch 修复及构建脚本
-│   ├── texlive/                # TeX Live 源码下载、宿主机/目标机交叉编译及资源打包脚本
-│   └── texstudio/              # TeXstudio 主程序交叉编译脚本
-├── texstudio_harmony/          # DevEco Studio 应用工程目录
-│   ├── AppScope/               # 全局应用配置
-│   ├── entry/                  # 主模块 (Main Entry) 目录，存放代码与生成的动态库
-│   └── qEmbeddedUiExtensionHost/ # UI 扩展 Host 模块
-├── third_party/                # 第三方依赖及子模块
-│   ├── lycium/                 # 用于 OpenHarmony 的第三方库交叉编译框架
-│   ├── poppler/                # Poppler 源码 (Git Submodule，包含适配 HarmonyOS 的修改)
-│   └── texstudio/              # TeXstudio 源码 (Git Submodule，包含适配 HarmonyOS 的修改)
-├── LICENSE                     # MIT 开源许可证
-└── .gitmodules                 # 子模块配置
+texstudio-harmony/
+├── additional-packages/     # 额外的预编译包或扩展依赖
+├── scripts/                 # 核心构建、打包与部署脚本
+│   ├── common/              # 通用脚本（依赖拷贝、部署配置生成、HNP打包、签名推送等）
+├── ├── ├── texstudio-harmony-deployment-settings.json # Qt6 自动生成鸿蒙应用部署配置
+│   ├── poppler/             # Poppler 库的下载与交叉编译脚本
+│   ├── qt/                  # Qt6 框架的下载与交叉编译脚本
+│   ├── texlive/             # TeX Live 依赖包编译脚本
+│   └── texstudio/           # TeXstudio 核心源码的交叉编译脚本
+├── third_party/             # 第三方依赖及核心源码库
+│   ├── lycium/              # 用于 OpenHarmony 交叉编译构建的依赖管理工具
+│   └── texstudio/           # TeXstudio 官方原始仓库源码（作为子模块接入）
+├── build/                   # 自动生成的构建输出目录（不入库，执行编译后产生）
+│   ├── build-poppler-ohos/  # Poppler 鸿蒙平台编译产物
+│   ├── build-qt-ohos/       # Qt6 鸿蒙平台编译产物
+│   └── build-texstudio-ohos/# TeXstudio 鸿蒙平台编译产物
+└── README.md                # 项目说明文档
 ```
 
 ## 环境要求
@@ -71,6 +73,10 @@ TeXstudio for HarmonyOS
 export TOOL_HOME="~/software/command-line-tools"
 ```
 
+**Qt6 & Poppler**: 
+* Qt6 版本为 gerrit/dev 最新分支 6.13.0 
+* Poppler 版本为 24.12.0 
+
 ## 快速开始
 
 ### 1. 克隆代码库
@@ -87,43 +93,52 @@ cd texstudio-harmony
 在确保环境变量 `TOOL_HOME` 配置无误后，请**依次**执行以下脚本：
 
 ```bash
-# 第一步：下载并编译 Qt for HarmonyOS
+# 第一步：下载 Qt6 所需的 additional-packages 到当前目录下
+https://drive.google.com/file/d/1muyUjBPS8B0CLEoLAhtGgxNY6C6W7TTl/view?usp=share_link
+
+# 第二步：下载并编译 Qt for HarmonyOS
 cd ./scripts/qt
 ./download_qt.sh
-./patch_qt.sh
+./build_qt_host.sh
 ./build_qt.sh
 
-# 第二步：编译 Poppler (依赖 Qt 与 Freetype)
+# 第三步：编译 Poppler
 cd ./scripts/poppler
-./build_freetype.sh
+./download_poppler.sh
 ./build_poppler.sh
 
-# 第三步：编译 Tex Live 相关依赖
+# 第四步：编译 Tex Live 相关依赖
 cd ./third_party/lycium
 ./build_all_packages.sh
 
-# 第四步：编译并打包 TeX Live
+# 第五步：编译并打包 TeX Live
 cd ./scripts/texlive
 ./download_texlive.sh
 ./build_texlive_host.sh
 ./build_texlive_ohos.sh
 ./build_pack_texmf.sh
 
-# 第五步：编译 TeXstudio
+# 第六步：编译 TeXstudio
 cd ./scripts/texstudio
 ./build_texstudio.sh
 
-# 第六步：将编译产物拷贝到工程中
+# 第七步：打包 Tex Live HNP
 cd ./scripts/common
-./copy_libs_entry.sh
 ./build_texlive_hnp.sh  # 打包成 OpenHarmony Native Package (HNP)
+
+# 第八步：构建HAP，使用 Qt6 提供的harmonydeployqt，构建位置为./scripts/common/libtexstudio-harmonyos
+cd ./scripts/common
+# 如果构建报错的话 pkill -f hvigor 
+./generate_deployment_settings.sh
+./generate_hvigor_hap.sh
+./add_hnp_support.sh
 ```
 
 ### 3. 生成签名并推送
 
-* 在 DevEco Studio 中打开texstudio_harmony工程，并生成签名
+* 在 DevEco Studio 中打开 libtexstudio-harmonyos 工程，并生成签名
 * 将 C:\Users\User\.ohos文件夹复制到scripts/common/sign下
-* 修改 texstudio_harmony/build-profile.json5 中 certpath、profile、storeFile 路径
+* 修改 libtexstudio-harmonyos/build-profile.json5 中 certpath、profile、storeFile 路径
 * 构建、签名并推送
   
   ```bash
@@ -133,6 +148,8 @@ cd ./scripts/common
   # 构建、签名并推送
   cd scripts/common/sign
   ./sign_push.sh
+
+  # 签名失败多半是 build-profile.json5 中有多余的逗号
   ```
 
 ## 致谢

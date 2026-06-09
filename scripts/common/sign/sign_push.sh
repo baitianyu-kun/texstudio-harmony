@@ -4,7 +4,7 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$( cd "$SCRIPT_DIR/../../.." &> /dev/null && pwd )"
-TEXSTUDIO_HARMONY_DIR="${PROJECT_ROOT}/texstudio_harmony"
+TEXSTUDIO_HARMONY_DIR="${PROJECT_ROOT}/scripts/common/libtexstudio-harmonyos"
 HNP_FILE="${PROJECT_ROOT}/build/texlive.hnp"
 
 cd $TEXSTUDIO_HARMONY_DIR

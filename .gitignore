@@ -21,3 +21,5 @@ texstudio_harmony/**/.test
 texstudio_harmony/dependencies
 texstudio_harmony/oh-package-lock.json5
 texstudio_harmony/entry/oh-package-lock.json5
+additional-packages/
+scripts/common/libtexstudio-harmonyos/
