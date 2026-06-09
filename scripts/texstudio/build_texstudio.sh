@@ -28,11 +28,7 @@ if [ ! -d "$QT_INSTALL_DIR" ]; then
     exit 1
 fi
 
-if [ ! -d "$POPPLER_INSTALL_DIR" ]; then
-    echo "Error: Poppler installation not found at $POPPLER_INSTALL_DIR."
-    echo "Please run build_poppler.sh first."
-    exit 1
-fi
+
 
 # Add OHOS toolchain to PATH for compilation
 export PATH="$NATIVE_OHOS_SDK/llvm/bin:$PATH"
@@ -53,12 +49,6 @@ cmake "$TEXSTUDIO_SRC_DIR" \
     -DOHOS_ARCH="$OHOS_TARGET_ARCH" \
     -DCMAKE_PREFIX_PATH="$QT_INSTALL_DIR;$POPPLER_INSTALL_DIR" \
     -DCMAKE_FIND_ROOT_PATH="$QT_INSTALL_DIR;$POPPLER_INSTALL_DIR" \
-    -DPoppler_INCLUDE_DIR="$POPPLER_INSTALL_DIR/include/poppler" \
-    -DPoppler_LIBRARY="$POPPLER_INSTALL_DIR/lib/libpoppler.so" \
-    -DPoppler_VERSION_STRING="21.03.0" \
-    -DPoppler_qt5_INCLUDE_DIR="$POPPLER_INSTALL_DIR/include/poppler/qt5" \
-    -DPoppler_qt5_LIBRARY="$POPPLER_INSTALL_DIR/lib/libpoppler-qt5.so" \
-    -DPoppler_qt5_VERSION_STRING="21.03.0" \
     -DQT_VERSION_MAJOR=5 \
     -DTEXSTUDIO_ENABLE_TESTS=OFF \
     -DPHONON=OFF

@@ -8,6 +8,8 @@ TeXstudio for HarmonyOS
 </picture>
 </div>
 
+## 🚀 **Qt6 支持：** [qt6-dev](https://github.com/baitianyu-kun/texstudio-harmony/tree/qt6-dev)
+
 ## 目录
 
 - [目录](#目录)
