@@ -1,3 +1,5 @@
+
+
 <h1 align="center">
 TeXstudio for HarmonyOS
 </h1>
@@ -124,7 +126,7 @@ cd ./scripts/common
 ### 3. 生成签名并推送
 
 * 在 DevEco Studio 中打开texstudio_harmony工程，并生成签名
-* 将 C:\Users\User\.ohos文件夹复制到scripts/common/sign下
+* 将 `~/.ohos` (Linux) 或 `C:\Users\<用户名>\.ohos` (Windows) 文件夹复制到 `scripts/common/sign` 下
 * 修改 texstudio_harmony/build-profile.json5 中 certpath、profile、storeFile 路径
 * 构建、签名并推送
   
